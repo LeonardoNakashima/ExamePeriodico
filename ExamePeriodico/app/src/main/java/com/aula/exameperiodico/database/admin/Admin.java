@@ -1,4 +1,6 @@
-package com.aula.exameperiodico.database.model;
+package com.aula.exameperiodico.database.admin;
+
+import com.aula.exameperiodico.database.colaborador.Colaborador;
 
 import java.util.Date;
 
