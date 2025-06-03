@@ -1,4 +1,4 @@
-package com.aula.exameperiodico;
+package com.aula.exameperiodico.database.model;
 
 import java.util.Date;
 
