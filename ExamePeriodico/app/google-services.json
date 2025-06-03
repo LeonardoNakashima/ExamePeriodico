@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "180204691517",
+    "project_id": "exame-projeto",
+    "storage_bucket": "exame-projeto.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180204691517:android:1b9af97cc15da06c544a54",
+        "android_client_info": {
+          "package_name": "com.aula.exameperiodico"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNhYEi01Zl3sk1T4CnCcNJPXHjpl8iI3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
