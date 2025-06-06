@@ -15,17 +15,8 @@ public class Admin extends Colaborador {
 
     public Admin(Integer numCracha, String nome, Date inicioAtendimento, Date fimAtendimento, Date dataInsercao, String senha) {
         super(numCracha, nome, inicioAtendimento, fimAtendimento, dataInsercao);
-
-    public Admin(String senha, String email) {
-        this.senha = senha;
-        this.email = email;
     }
 
-    public Admin(Integer numCracha, String nome, Date inicioAtendimento, Date fimAtendimento, String senha, String email) {
-        super(numCracha, nome, inicioAtendimento, fimAtendimento);
-        this.senha = senha;
-        this.email = email;
-    }
 
     public String getSenha() {
         return senha;

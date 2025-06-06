@@ -4,18 +4,18 @@ import java.util.Date;
 
 public class Colaborador {
     private Integer numCracha;
-    private String nome;
-    private Date dataInsercao;
+    private String nomeColaborador;
+    private Date dataHora;
     private Date inicioAtendimento;
     private Date fimAtendimento;
 
     public Colaborador() {
 
     }
-    public Colaborador(Integer numCracha, String nome, Date dataInsercao, Date inicioAtendimento, Date fimAtendimento) {
+    public Colaborador(Integer numCracha, String nome, Date dataHora, Date inicioAtendimento, Date fimAtendimento) {
         this.numCracha = numCracha;
-        this.nome = nome;
-        this.dataInsercao = dataInsercao;
+        this.nomeColaborador = nome;
+        this.dataHora = dataHora;
         this.inicioAtendimento = inicioAtendimento;
         this.fimAtendimento = fimAtendimento;
     }
@@ -28,12 +28,12 @@ public class Colaborador {
         this.numCracha = numCracha;
     }
 
-    public String getNome() {
-        return nome;
+    public String getNomeColaborador() {
+        return nomeColaborador;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNomeColaborador(String nomeColaborador) {
+        this.nomeColaborador = nomeColaborador;
     }
 
     public Date getInicioAtendimento() {
@@ -52,11 +52,11 @@ public class Colaborador {
         this.fimAtendimento = fimAtendimento;
     }
 
-    public Date getDataInsercao() {
-        return dataInsercao;
+    public Date getDataHora() {
+        return dataHora;
     }
 
-    public void setDataInsercao(Date dataInsercao) {
-        this.dataInsercao = dataInsercao;
+    public void setDataHora(Date dataHora) {
+        this.dataHora = dataHora;
     }
 }

@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aula.exameperiodico.R;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.ExameViewHolder> {
 
@@ -46,24 +44,21 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
     public void onBindViewHolder(@NonNull ExameViewHolder holder, int position) {
         ExameMedico exame = listaExames.get(position);
 
-        holder.tvCracha.setText("Crachá: " + exame.getCracha());
+        // Usando os novos métodos de formatação segura
+        holder.tvCracha.setText("Crachá: " + exame.getNumCracha());
+        holder.tvDataHora.setText("Data/Hora: " + exame.getFormattedDataHora());
         holder.tvNomeColaborador.setText("Nome: " + exame.getNomeColaborador());
+        holder.tvInicioAtendimento.setText("Início: " + exame.getFormattedInicioAtendimento());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-
-        holder.tvDataHora.setText("Data/Hora: " + sdf.format(exame.getDataHora()));
-        holder.tvInicioAtendimento.setText("Início: " + sdf.format(exame.getInicioAtendimento()));
-
-        if (exame.getTerminoAtendimento() != null) {
+        // Lógica para o término do atendimento, ainda usando a formatação segura
+        String terminoAtendimento = exame.getFormattedTerminoAtendimento();
+        if (!terminoAtendimento.isEmpty()) {
             holder.tvTerminoAtendimento.setVisibility(View.VISIBLE);
-            holder.tvTerminoAtendimento.setText("Término: " + sdf.format(exame.getTerminoAtendimento()));
+            holder.tvTerminoAtendimento.setText("Término: " + terminoAtendimento);
         } else {
             holder.tvTerminoAtendimento.setVisibility(View.GONE);
         }
     }
-
-
-
 
     @Override
     public int getItemCount() {
