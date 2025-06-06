@@ -1,18 +1,19 @@
 package com.aula.exameperiodico.database;
-
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.FirebaseFirestore;
 public class Database {
 
+    private static FirebaseFirestore db;
 
-    public Database() {}
-
-    public void cadastrarColaborador() {
-
+    public static void init() {
+        if (db == null) {
+            db = FirebaseFirestore.getInstance();
+        }
     }
-    public void removerColaborador() {
 
-    }
-    public void listarColaborador() {
-
+    public static FirebaseFirestore getDatabase() {
+        if (db == null) init();
+        return db;
     }
 
 }
