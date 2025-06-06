@@ -22,9 +22,4 @@
         android:name="com.aula.exameperiodico.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
-    <fragment
-        android:id="@+id/area"
-        android:name="com.aula.exameperiodico.Area"
-        android:label="fragment_area"
-        tools:layout="@layout/fragment_area" />
 </navigation>
