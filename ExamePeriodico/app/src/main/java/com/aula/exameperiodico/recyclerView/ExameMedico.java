@@ -5,9 +5,8 @@ public class ExameMedico {
     private String dataHora;
     private String nomeColaborador;
     private String inicioAtendimento;
-    private String terminoAtendimento; // pode ser null
+    private String terminoAtendimento;
 
-    // Construtor vazio obrigatório para o Firebase
     public ExameMedico() {}
 
     public ExameMedico(String cracha, String dataHora, String nomeColaborador, String inicioAtendimento, String terminoAtendimento) {
