@@ -1,36 +1,36 @@
 package com.aula.exameperiodico.recyclerView;
 
+import java.util.Date;
+
 public class ExameMedico {
-    private String cracha;
-    private String dataHora;
+    private Integer cracha;
     private String nomeColaborador;
-    private String inicioAtendimento;
-    private String terminoAtendimento;
+    private Date dataHora;
+    private Date inicioAtendimento;
+    private Date terminoAtendimento;
 
     public ExameMedico() {}
 
-    public ExameMedico(String cracha, String dataHora, String nomeColaborador, String inicioAtendimento, String terminoAtendimento) {
+    public ExameMedico(Integer cracha, String nomeColaborador, Date dataHora, Date inicioAtendimento, Date terminoAtendimento) {
         this.cracha = cracha;
-        this.dataHora = dataHora;
         this.nomeColaborador = nomeColaborador;
+        this.dataHora = dataHora;
         this.inicioAtendimento = inicioAtendimento;
         this.terminoAtendimento = terminoAtendimento;
     }
 
-    // Getters e setters
-    public String getCracha() { return cracha; }
-    public void setCracha(String cracha) { this.cracha = cracha; }
-
-    public String getDataHora() { return dataHora; }
-    public void setDataHora(String dataHora) { this.dataHora = dataHora; }
+    public Integer getCracha() { return cracha; }
+    public void setCracha(Integer cracha) { this.cracha = cracha; }
 
     public String getNomeColaborador() { return nomeColaborador; }
     public void setNomeColaborador(String nomeColaborador) { this.nomeColaborador = nomeColaborador; }
 
-    public String getInicioAtendimento() { return inicioAtendimento; }
-    public void setInicioAtendimento(String inicioAtendimento) { this.inicioAtendimento = inicioAtendimento; }
+    public Date getDataHora() { return dataHora; }
+    public void setDataHora(Date dataHora) { this.dataHora = dataHora; }
 
-    public String getTerminoAtendimento() { return terminoAtendimento; }
-    public void setTerminoAtendimento(String terminoAtendimento) { this.terminoAtendimento = terminoAtendimento; }
+    public Date getInicioAtendimento() { return inicioAtendimento; }
+    public void setInicioAtendimento(Date inicioAtendimento) { this.inicioAtendimento = inicioAtendimento; }
+
+    public Date getTerminoAtendimento() { return terminoAtendimento; }
+    public void setTerminoAtendimento(Date terminoAtendimento) { this.terminoAtendimento = terminoAtendimento; }
 }
-

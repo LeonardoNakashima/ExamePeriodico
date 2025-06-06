@@ -39,7 +39,7 @@ public class ColaboradorDAO {
                             db.getDatabase()
                                     .collection("exames")
                                     .document(String.valueOf(argColaborador.getNumCracha()))
-                                    .set(new Colaborador(argColaborador.getNumCracha(), argColaborador.getNome(), argColaborador.getInicioAtendimento(), argColaborador.getFimAtendimento()));
+                                    .set(new Colaborador(argColaborador.getNumCracha(), argColaborador.getNome(), argColaborador.getDataInsercao(), argColaborador.getInicioAtendimento(), argColaborador.getFimAtendimento()));
                         }
                     });
             // Inserir nova nota

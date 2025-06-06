@@ -10,8 +10,8 @@ public class Admin extends Colaborador {
     public Admin() {
         super();
     }
-    public Admin(Integer numCracha, String nome, Date inicioAtendimento, Date fimAtendimento, String senha) {
-        super(numCracha, nome, inicioAtendimento, fimAtendimento);
+    public Admin(Integer numCracha, String nome, Date inicioAtendimento, Date fimAtendimento, Date dataInsercao, String senha) {
+        super(numCracha, nome, inicioAtendimento, fimAtendimento, dataInsercao);
         this.senha = senha;
     }
     public String getSenha() {

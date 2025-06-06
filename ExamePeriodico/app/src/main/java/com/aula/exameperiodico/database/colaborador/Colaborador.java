@@ -5,15 +5,17 @@ import java.util.Date;
 public class Colaborador {
     private Integer numCracha;
     private String nome;
+    private Date dataInsercao;
     private Date inicioAtendimento;
     private Date fimAtendimento;
 
     public Colaborador() {
 
     }
-    public Colaborador(Integer numCracha, String nome, Date inicioAtendimento, Date fimAtendimento) {
+    public Colaborador(Integer numCracha, String nome, Date dataInsercao, Date inicioAtendimento, Date fimAtendimento) {
         this.numCracha = numCracha;
         this.nome = nome;
+        this.dataInsercao = dataInsercao;
         this.inicioAtendimento = inicioAtendimento;
         this.fimAtendimento = fimAtendimento;
     }
@@ -48,5 +50,13 @@ public class Colaborador {
 
     public void setFimAtendimento(Date fimAtendimento) {
         this.fimAtendimento = fimAtendimento;
+    }
+
+    public Date getDataInsercao() {
+        return dataInsercao;
+    }
+
+    public void setDataInsercao(Date dataInsercao) {
+        this.dataInsercao = dataInsercao;
     }
 }
