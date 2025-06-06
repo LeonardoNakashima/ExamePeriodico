@@ -10,6 +10,7 @@ lifecycleLivedataKtx = "2.9.0"
 lifecycleViewmodelKtx = "2.9.0"
 navigationFragment = "2.9.0"
 navigationUi = "2.9.0"
+googleGmsGoogleServices = "4.4.2"
 firebaseFirestore = "25.1.4"
 
 [libraries]
@@ -27,4 +28,5 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 
