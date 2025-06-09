@@ -26,8 +26,8 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
         public ExameViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCracha = itemView.findViewById(R.id.tvCracha);
-            tvDataHora = itemView.findViewById(R.id.tvDataHora);
-            tvNomeColaborador = itemView.findViewById(R.id.tvNomeColaborador);
+            tvDataHora = itemView.findViewById(R.id.tvDataInsercao);
+            tvNomeColaborador = itemView.findViewById(R.id.tvNomeAdm);
             tvInicioAtendimento = itemView.findViewById(R.id.tvInicioAtendimento);
             tvTerminoAtendimento = itemView.findViewById(R.id.tvTerminoAtendimento);
         }
@@ -43,14 +43,19 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
     @Override
     public void onBindViewHolder(@NonNull ExameViewHolder holder, int position) {
         ExameMedico exame = listaExames.get(position);
-        holder.tvCracha.setText("Crachá: " + exame.getCracha());
-        holder.tvDataHora.setText("Data/Hora: " + exame.getDataHora());
-        holder.tvNomeColaborador.setText("Nome: " + exame.getNomeColaborador());
-        holder.tvInicioAtendimento.setText("Início: " + exame.getInicioAtendimento());
 
-        if (exame.getTerminoAtendimento() != null && !exame.getTerminoAtendimento().isEmpty()) {
+        // Usando os novos métodos de formatação segura
+        holder.tvCracha.setText("Crachá: " + exame.getNumCracha());
+        holder.tvDataHora.setText("Data/Hora: " + exame.getFormattedDataHora());
+        holder.tvNomeColaborador.setText("Nome: " + exame.getNomeColaborador());
+        holder.tvInicioAtendimento.setText("Início: " + exame.getFormattedInicioAtendimento());
+
+        // Lógica para o término do atendimento, ainda usando a formatação segura
+        String terminoAtendimento = exame.getFormattedTerminoAtendimento();
+        if (!terminoAtendimento.isEmpty()) {
             holder.tvTerminoAtendimento.setVisibility(View.VISIBLE);
-            holder.tvTerminoAtendimento.setText("Término: " + exame.getTerminoAtendimento());
+            holder.tvTerminoAtendimento.setText("Término: " + terminoAtendimento);
+
         } else {
             holder.tvTerminoAtendimento.setVisibility(View.GONE);
         }
