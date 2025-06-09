@@ -55,6 +55,7 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
         if (!terminoAtendimento.isEmpty()) {
             holder.tvTerminoAtendimento.setVisibility(View.VISIBLE);
             holder.tvTerminoAtendimento.setText("Término: " + terminoAtendimento);
+
         } else {
             holder.tvTerminoAtendimento.setVisibility(View.GONE);
         }
