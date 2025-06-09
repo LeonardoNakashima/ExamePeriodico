@@ -1,29 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".ui.home.HomeFragment">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/exame_item" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.core.widget.NestedScrollView>
     <ImageView
         android:id="@+id/imageViewBackground"
         android:layout_width="0dp"
@@ -54,13 +36,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            tools:src="@tools:sample/avatars"/>
+            tools:src="@tools:sample/avatars" />
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- RecyclerView para a lista de itens -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewItems"
+        android:id="@+id/rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -71,8 +52,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/buttonFinalizar"
-        tools:listitem="@layout/exame_item" />
+        tools:listitem="@layout/exame_item" /> <!-- Certifique-se que 'exame_item' existe -->
 
+    <!-- 4. Botão Finalizar na parte inferior -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonFinalizar"
         style="@style/Widget.Material3.Button.ElevatedButton"
