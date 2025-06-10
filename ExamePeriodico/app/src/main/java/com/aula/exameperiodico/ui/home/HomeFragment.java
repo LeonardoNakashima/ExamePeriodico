@@ -1,6 +1,9 @@
 package com.aula.exameperiodico.ui.home;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +36,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        return root;
+        return binding.getRoot();
     }
 
     @Override
@@ -42,7 +44,14 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = binding.rv;
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Layout normal (sem reverseLayout)
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setItemViewCacheSize(20);
+
         adapter = new ExameMedicoAdapter(listaExames);
         recyclerView.setAdapter(adapter);
 
@@ -52,13 +61,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void carregarExamesDoFirebase() {
-        colaboradorDAO.listarColaborador(new ColaboradorDAO.ColaboradoresListCallback() {
+        colaboradorDAO.listarAtendimentos(new ColaboradorDAO.ColaboradoresListCallback() {
             @Override
             public void onColaboradoresLoaded(List<Colaborador> colaboradores) {
                 listaExames.clear();
 
-                for (Colaborador col : colaboradores) {
+                // Ordena por dataHora decrescente (mais recente primeiro)
+                colaboradores.sort((a, b) -> b.getDataHora().compareTo(a.getDataHora()));
 
+                for (Colaborador col : colaboradores) {
                     listaExames.add(new ExameMedico(
                             col.getNumCracha(),
                             col.getNomeColaborador(),
@@ -67,14 +78,16 @@ public class HomeFragment extends Fragment {
                             col.getFimAtendimento()
                     ));
                 }
+
                 adapter.notifyDataSetChanged();
-                Toast.makeText(getContext(), "Exames carregados do Firebase. Total: " + colaboradores.size(), Toast.LENGTH_SHORT).show();
+
+                recyclerView.post(() -> recyclerView.scrollToPosition(0));
             }
 
             @Override
             public void onFailure(Exception e) {
                 Toast.makeText(getContext(), "Erro ao carregar exames do Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                System.err.println("Erro ao carregar exames: " + e.getMessage());
+                Log.d(TAG, "Erro ao carregar exames: " + e.getMessage());
             }
         });
     }
