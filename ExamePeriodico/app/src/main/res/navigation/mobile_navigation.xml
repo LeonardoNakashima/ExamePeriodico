@@ -8,14 +8,13 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.aula.exameperiodico.ui.home.HomeFragment"
-        android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.aula.exameperiodico.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_admin"
+        android:name="com.aula.exameperiodico.ui.area_restrita.AreaRestrita"
+        android:label="navigation_admin"
+        tools:layout="@layout/fragment_area_restrita" />
 
     <fragment
         android:id="@+id/navigation_notifications"

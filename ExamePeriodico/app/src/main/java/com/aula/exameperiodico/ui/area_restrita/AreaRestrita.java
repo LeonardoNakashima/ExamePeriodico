@@ -1,4 +1,4 @@
-package com.aula.exameperiodico;
+package com.aula.exameperiodico.ui.area_restrita;
 
 import android.os.Bundle;
 
@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.aula.exameperiodico.R;
 
 /**
  * A simple {@link Fragment} subclass.
