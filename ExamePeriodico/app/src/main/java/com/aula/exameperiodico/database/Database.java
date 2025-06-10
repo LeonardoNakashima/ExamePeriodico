@@ -1,5 +1,9 @@
 package com.aula.exameperiodico.database;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,8 +17,14 @@ public class Database {
         if (db == null) {
             db = FirebaseFirestore.getInstance();
         }
+        else {
+            Log.d(TAG, "Erro na iniciação do database");
+        }
         if (auth == null) {
             auth = FirebaseAuth.getInstance();
+        }
+        else {
+            Log.d(TAG, "Erro na iniciação do autenticação");
         }
     }
 
