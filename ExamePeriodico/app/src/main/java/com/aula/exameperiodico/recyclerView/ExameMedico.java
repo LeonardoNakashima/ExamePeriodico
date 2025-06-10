@@ -9,13 +9,10 @@ public class ExameMedico {
     private String nomeColaborador;
     private Date dataHora;
     private Date inicioAtendimento;
-    private Date terminoAtendimento; // Use 'terminoAtendimento' para consistência com o que você mostrou no adapter
-
+    private Date terminoAtendimento;
     public ExameMedico() {
-        // Construtor vazio necessário para Firebase Firestore
     }
 
-    // Construtor que aceita objetos Date, como recebido do HomeFragment
     public ExameMedico(int numCracha, String nomeColaborador, Date dataHora, Date inicioAtendimento, Date terminoAtendimento) {
         this.numCracha = numCracha;
         this.nomeColaborador = nomeColaborador;
@@ -24,7 +21,6 @@ public class ExameMedico {
         this.terminoAtendimento = terminoAtendimento;
     }
 
-    // --- Getters e Setters (já devem existir, mas incluindo para clareza) ---
     public int getNumCracha() {
         return numCracha;
     }
@@ -65,7 +61,6 @@ public class ExameMedico {
         this.terminoAtendimento = terminoAtendimento;
     }
 
-    // --- Métodos de Formatação Segura para uso no Adapter ---
     private String formatDateSafely(Date date) {
         if (date == null) {
             return ""; // Retorna string vazia se a data for null

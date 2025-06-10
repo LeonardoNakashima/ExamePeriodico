@@ -45,7 +45,7 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
         ExameMedico exame = listaExames.get(position);
 
         // Usando os novos métodos de formatação segura
-        holder.tvCracha.setText("Crachá: " + exame.getNumCracha());
+        holder.tvCracha.setText("Admin Cracha: " + exame.getNumCracha());
         holder.tvDataHora.setText("Data/Hora: " + exame.getFormattedDataHora());
         holder.tvNomeColaborador.setText("Nome: " + exame.getNomeColaborador());
         holder.tvInicioAtendimento.setText("Início: " + exame.getFormattedInicioAtendimento());
