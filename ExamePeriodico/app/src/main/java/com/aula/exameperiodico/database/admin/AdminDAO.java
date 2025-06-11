@@ -17,7 +17,7 @@
 //import java.util.List;
 //
 //public class AdminDAO {
-
+//
 //    public void login(String email, String password, Context c){
 //        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
 //            Toast.makeText(c, "Email e senha são obrigatórios para login.", Toast.LENGTH_LONG).show();

@@ -7,18 +7,28 @@ import java.util.Locale;
 public class ExameMedico {
     private int numCracha;
     private String nomeColaborador;
-    private Date dataHora;
+    private String dataHora;
     private Date inicioAtendimento;
     private Date terminoAtendimento;
+    private Boolean status;
     public ExameMedico() {
     }
 
-    public ExameMedico(int numCracha, String nomeColaborador, Date dataHora, Date inicioAtendimento, Date terminoAtendimento) {
+    public ExameMedico(int numCracha, String nomeColaborador, String dataHora, Date inicioAtendimento, Date terminoAtendimento, Boolean status) {
         this.numCracha = numCracha;
         this.nomeColaborador = nomeColaborador;
         this.dataHora = dataHora;
         this.inicioAtendimento = inicioAtendimento;
         this.terminoAtendimento = terminoAtendimento;
+        this.status = status;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
     public int getNumCracha() {
@@ -37,11 +47,11 @@ public class ExameMedico {
         this.nomeColaborador = nomeColaborador;
     }
 
-    public Date getDataHora() {
+    public String getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(Date dataHora) {
+    public void setDataHora(String dataHora) {
         this.dataHora = dataHora;
     }
 
@@ -68,11 +78,6 @@ public class ExameMedico {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         return sdf.format(date);
     }
-
-    public String getFormattedDataHora() {
-        return formatDateSafely(dataHora);
-    }
-
     public String getFormattedInicioAtendimento() {
         return formatDateSafely(inicioAtendimento);
     }

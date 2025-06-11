@@ -1,7 +1,6 @@
 package com.aula.exameperiodico.recyclerView;
 
-import static android.os.Build.VERSION_CODES.R;
-
+import com.aula.exameperiodico.R;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -27,7 +26,7 @@ public class ExamesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exames);
 
-        recyclerView = findViewById(R.id.recyclerViewExames);
+        recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ExameMedicoAdapter(listaExames);
         recyclerView.setAdapter(adapter);

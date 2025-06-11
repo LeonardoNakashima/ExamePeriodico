@@ -5,13 +5,15 @@ import java.util.Date;
 
 public class Colaborador implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     private int numCracha;
     private String nomeColaborador;
     private Date inicioAtendimento;
-    private Date dataHora;
+    private String dataHora;
     private Date fimAtendimento;
+    private Boolean status;
+    private String documentId;
+
+
     public String getNomeColaborador() {
         return nomeColaborador;
     }
@@ -39,11 +41,11 @@ public class Colaborador implements Serializable {
         this.inicioAtendimento = inicioAtendimento;
     }
 
-    public Date getDataHora() {
+    public String getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(Date dataHora) {
+    public void setDataHora(String dataHora) {
         this.dataHora = dataHora;
     }
 
@@ -53,6 +55,21 @@ public class Colaborador implements Serializable {
 
     public void setFimAtendimento(Date fimAtendimento) {
         this.fimAtendimento = fimAtendimento;
+    }
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     @Override

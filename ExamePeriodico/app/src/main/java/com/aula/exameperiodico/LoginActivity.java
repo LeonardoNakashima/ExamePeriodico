@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.aula.exameperiodico.database.colaborador.Colaborador;
@@ -17,14 +18,10 @@ import java.util.Date;
 import java.util.Locale;
 
 public class LoginActivity extends AppCompatActivity {
-
-    private static final String TAG = "LoginActivity"; // Tag para logs
-
-    private EditText editTextCracha; // Removido editTextNome
+    private static final String TAG = "LoginActivity";
+    private EditText editTextCracha, editTextNome;
     private Button btnEntrar;
     private ColaboradorDAO colaboradorDAO;
-
-    // A constante EXTRA_NOME_CLIENTE foi removida.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         colaboradorDAO = new ColaboradorDAO();
 
         editTextCracha = findViewById(R.id.inputNum);
-        // editTextNome = findViewById(R.id.edtNomeCliente); // Removido
+        editTextNome = findViewById(R.id.inputNome);
         btnEntrar = findViewById(R.id.btnLogin);
 
         btnEntrar.setOnClickListener(v -> registrarEntrada());
@@ -42,56 +39,68 @@ public class LoginActivity extends AppCompatActivity {
 
     private void registrarEntrada() {
         String crachaStr = editTextCracha.getText().toString().trim();
-        // String nomeStr foi removida
+        String collaboratorNameInput = editTextNome.getText().toString().trim();
 
         if (crachaStr.isEmpty()) {
             Toast.makeText(this, "Informe o número do crachá", Toast.LENGTH_SHORT).show();
             return;
         }
-        // A verificação de nomeStr.isEmpty() foi removida.
+        if (collaboratorNameInput.isEmpty()) {
+            Toast.makeText(this, "Informe o nome do colaborador", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         try {
             int numCracha = Integer.parseInt(crachaStr);
+            Date agora = new Date(); // Obter a data e hora atual
 
-            Log.d(TAG, "Tentando buscar crachá: " + numCracha); // Log antes da busca
+            // SEMPRE CRIAR UM NOVO OBJETO Colaborador para o registro
+            Colaborador novoAtendimento = new Colaborador();
+            novoAtendimento.setNumCracha(numCracha);
+            novoAtendimento.setNomeColaborador(collaboratorNameInput);
+            novoAtendimento.setInicioAtendimento(agora);
+            novoAtendimento.setStatus(false); // Status definido como false ao "entrar"
+            // O documentId será definido no callback do DAO após o sucesso do add()
 
-            colaboradorDAO.buscarColaboradorPorCracha(numCracha, new ColaboradorDAO.ColaboradorCallback() {
+            // Registrar este NOVO atendimento no banco de dados e obter o documentId
+            colaboradorDAO.cadastrarAtendimento(novoAtendimento, this, new ColaboradorDAO.OperacaoAtendimentoCallback() {
                 @Override
-                public void onColaboradorLoaded(Colaborador colaborador) {
-                    if (colaborador != null) {
-                        Log.d(TAG, "Crachá encontrado: " + colaborador.getNumCracha()); // Log de sucesso
-                        // Crachá encontrado, proceda com o registro de entrada
-                        Date agora = new Date();
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-                        String dataHoraFormatada = sdf.format(agora);
-
-                        colaborador.setInicioAtendimento(agora);
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("colaborador_atual", colaborador);
-                        // intent.putExtra(LoginActivity.EXTRA_NOME_CLIENTE, nomeStr); // Removido
-                        startActivity(intent);
-
-                        Toast.makeText(LoginActivity.this, "Entrada registrada em: " + dataHoraFormatada, Toast.LENGTH_LONG).show();
-                        Toast.makeText(LoginActivity.this, "Bem vindo " + colaborador.getNumCracha(), Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.d(TAG, "Crachá não encontrado para o número: " + numCracha); // Log de crachá não encontrado
-                        // Crachá não encontrado no banco de dados
-                        Toast.makeText(LoginActivity.this, "Número de crachá não encontrado.", Toast.LENGTH_SHORT).show();
+                public void onSuccess(@Nullable Colaborador colaboradorSalvo) {
+                    // Este bloco executa DEPOIS que o registro foi salvo no Firebase
+                    // e o 'colaboradorSalvo' agora tem o 'documentId' populado.
+                    if (colaboradorSalvo == null || colaboradorSalvo.getDocumentId() == null) {
+                        Toast.makeText(LoginActivity.this, "Erro interno: Colaborador salvo ou ID é nulo.", Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "onSuccess: colaboradorSalvo ou documentId é nulo após cadastro.");
+                        return;
                     }
-                    editTextCracha.setText(""); // Limpa o campo de texto
+
+                    Toast.makeText(LoginActivity.this, "Entrada registrada e salva no banco!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Atendimento salvo. Preparando para MainActivity. Document ID: " + colaboradorSalvo.getDocumentId());
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("colaborador_atual", colaboradorSalvo); // Passa o objeto completo com o documentId
+
+                    editTextCracha.setText("");
+                    editTextNome.setText("");
+                    startActivity(intent);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                    String dataHoraFormatada = sdf.format(agora);
+                    Toast.makeText(LoginActivity.this, "Entrada registrada em: " + dataHoraFormatada, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Bem vindo " + colaboradorSalvo.getNomeColaborador(), Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    Log.e(TAG, "Erro na busca por crachá: " + numCracha + ", Mensagem: " + e.getMessage(), e); // Log de falha
-                    Toast.makeText(LoginActivity.this, "Erro ao verificar crachá: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    editTextCracha.setText(""); // Limpa o campo de texto
+                    Toast.makeText(LoginActivity.this, "Falha ao registrar entrada: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Falha ao registrar entrada no banco: " + e.getMessage(), e);
+                    editTextCracha.setText("");
+                    editTextNome.setText("");
                 }
             });
 
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Erro de formato do número do crachá: " + crachaStr, e); // Log de NumberFormatException
+            Log.e(TAG, "Erro de formato do número do crachá: " + crachaStr, e);
             Toast.makeText(this, "Número de crachá inválido", Toast.LENGTH_SHORT).show();
         }
     }
