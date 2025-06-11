@@ -26,7 +26,7 @@ public class ColaboradorDAO {
 
     private static final String TAG = "ColaboradorDAO";
     private static final String EXAMES_COLLECTION = "exames";
-    private static final String ID_COUNTER_DOCUMENT = "exames_id";
+    private static final String ID_COUNTER_DOCUMENT = "exames_id"; // Este parece ser um documento fixo, não um contador
     private static final String ATENDIMENTOS_SUBCOLLECTION = "atendimentos";
 
     public interface ColaboradoresListCallback {
@@ -34,14 +34,13 @@ public class ColaboradorDAO {
         void onFailure(Exception e);
     }
 
-    public interface ColaboradorCallback {
-        void onColaboradorLoaded(Colaborador colaborador);
+    public interface OperacaoAtendimentoCallback {
+        void onSuccess(@Nullable Colaborador resultColaborador);
         void onFailure(Exception e);
     }
 
-    // NOVA INTERFACE DE CALLBACK para operações de escrita (cadastro/atualização)
-    public interface OperacaoAtendimentoCallback {
-        void onSuccess(@Nullable Colaborador updatedColaborador); // Retorna o objeto (pode ser null para atualizações simples)
+    public interface ColaboradorCallback {
+        void onColaboradorLoaded(Colaborador colaborador);
         void onFailure(Exception e);
     }
 
@@ -54,14 +53,14 @@ public class ColaboradorDAO {
             getDb().collection(EXAMES_COLLECTION)
                     .document(ID_COUNTER_DOCUMENT)
                     .collection(ATENDIMENTOS_SUBCOLLECTION)
-                    .add(colaborador) // Adiciona um novo documento com ID automático
+                    .add(colaborador)
                     .addOnSuccessListener(documentReference -> {
                         String newDocumentId = documentReference.getId();
-                        colaborador.setDocumentId(newDocumentId); // Define o ID gerado no objeto Colaborador
+                        colaborador.setDocumentId(newDocumentId);
 
                         Toast.makeText(context, "Atendimento cadastrado: " + colaborador.getNumCracha(), Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "Atendimento cadastrado para Crachá: " + colaborador.getNumCracha() + ". ID do Documento: " + newDocumentId);
-                        callback.onSuccess(colaborador); // Notifica sucesso com o objeto Colaborador atualizado (com ID)
+                        callback.onSuccess(colaborador);
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(context, "Erro ao cadastrar atendimento: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -75,22 +74,22 @@ public class ColaboradorDAO {
         }
     }
 
-    public void atualizarAtendimento(String documentId, Date fimAtendimento, String tempoData, boolean status, Context context, final OperacaoAtendimentoCallback callback) {
+    public void atualizarAtendimento(String documentId, Date fimAtendimento, String tempoAtendimentoFormatado, boolean status, Context context, final OperacaoAtendimentoCallback callback) {
         if (documentId == null || documentId.isEmpty()) {
             Toast.makeText(context, "ID do atendimento inválido para atualização.", Toast.LENGTH_SHORT).show();
-            callback.onFailure(new IllegalArgumentException("Document ID is null or empty."));
+            callback.onFailure(new IllegalArgumentException("ID do documento é nulo ou vazio."));
             return;
         }
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("fimAtendimento", fimAtendimento);
-        updates.put("dataHora", tempoData);
+        updates.put("tempoAtendimento", tempoAtendimentoFormatado); // Nome do campo deve ser consistente com o modelo Colaborador
         updates.put("status", status);
 
         getDb().collection(EXAMES_COLLECTION)
                 .document(ID_COUNTER_DOCUMENT)
                 .collection(ATENDIMENTOS_SUBCOLLECTION)
-                .document(documentId) // Atualiza pelo ID do documento
+                .document(documentId)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Atendimento atualizado: " + documentId, Toast.LENGTH_SHORT).show();
@@ -107,7 +106,7 @@ public class ColaboradorDAO {
     public void removerAtendimento(String documentId, Context c, final OperacaoAtendimentoCallback callback) {
         if (documentId == null || documentId.isEmpty()) {
             Toast.makeText(c, "ID do atendimento inválido para remoção.", Toast.LENGTH_SHORT).show();
-            callback.onFailure(new IllegalArgumentException("Document ID is null or empty."));
+            callback.onFailure(new IllegalArgumentException("ID do documento é nulo ou vazio."));
             return;
         }
 
@@ -150,21 +149,15 @@ public class ColaboradorDAO {
                         for (DocumentSnapshot doc : value.getDocuments()) {
                             Colaborador atendimento = doc.toObject(Colaborador.class);
                             if (atendimento != null) {
-                                atendimento.setDocumentId(doc.getId()); // Popula o documentId ao carregar!
+                                atendimento.setDocumentId(doc.getId());
                                 atendimentosList.add(atendimento);
                             } else {
-                                Log.w(TAG, "Documento " + doc.getId() + " não pôde ser convertido para Atendimento (Colaborador).");
+                                Log.w(TAG, "Documento " + doc.getId() + " não pôde ser convertido para Colaborador.");
                             }
                         }
                         callback.onColaboradoresLoaded(atendimentosList);
                         Log.d(TAG, "Lista de atendimentos atualizada. Total: " + atendimentosList.size());
                     }
                 });
-    }
-
-    // Este método não será mais usado na LoginActivity com o novo fluxo de "sempre criar novo"
-    public void buscarColaboradorPorCracha(int numCracha, final ColaboradorCallback callback) {
-        Log.w(TAG, "buscarColaboradorPorCracha chamado, mas este método não é mais usado para o fluxo principal de login.");
-        callback.onColaboradorLoaded(null); // Retorna null imediatamente ou implementa a busca por campo
     }
 }
