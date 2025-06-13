@@ -15,21 +15,20 @@ import android.widget.Toast;
 import com.aula.exameperiodico.database.Database;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginAdminFragment extends Fragment {
+public class LoginAdm extends Fragment {
 
-    public LoginAdminFragment() {
+    public LoginAdm() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login_admin, container, false);
+        View view = inflater.inflate(R.layout.fragment_login_adm, container, false);
 
         EditText editCracha = view.findViewById(R.id.numCracha);
         EditText editSenha = view.findViewById(R.id.senhaAdm);
         Button btnLogin = view.findViewById(R.id.logarAdm);
-
         btnLogin.setOnClickListener(v -> {
             String cracha = editCracha.getText().toString().trim();
             String senha = editSenha.getText().toString().trim();
