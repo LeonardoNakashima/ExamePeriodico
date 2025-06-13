@@ -141,8 +141,6 @@ public class MainActivity extends AppCompatActivity {
                     colaboradorDAO.atualizarAtendimento(colaboradorAtual.getDocumentId(), fimAtendimento, tempoAtendimentoFormatado, true, this, new ColaboradorDAO.OperacaoAtendimentoCallback() {
                         @Override
                         public void onSuccess(@Nullable Colaborador resultColaborador) {
-                            // A atualização no banco foi bem-sucedida
-                            Toast.makeText(MainActivity.this, "Atendimento finalizado! Duração: " + tempoAtendimentoFormatado, Toast.LENGTH_LONG).show();
                             colaboradorAtual = null; // Limpa o colaborador atual após finalizar com sucesso
                             Log.d("MainActivity", "Finalizar Atendimento: Atendimento finalizado e colaboradorAtual limpo.");
                         }
@@ -175,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                                 colaboradorAtual = null; // Limpa o colaborador atual
                                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                                 startActivity(intent);
-                                finish(); // Finaliza a MainActivity para que o usuário não possa voltar
+                                finish();
                             }
 
                             @Override
@@ -185,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                                 colaboradorAtual = null; // Limpa o colaborador atual
                                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                                 startActivity(intent);
-                                finish(); // Finaliza a MainActivity
+                                finish();
                             }
                         });
                     } else {
@@ -194,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                         colaboradorAtual = null; // Limpa o colaborador atual
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
-                        finish(); // Finaliza a MainActivity
+                        finish();
                     }
                 })
                 .setNegativeButton("Não", null)
