@@ -52,17 +52,14 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             int numCracha = Integer.parseInt(crachaStr);
-            Date agora = new Date(); // Obter a data e hora atual
+            Date agora = new Date();
 
-            // SEMPRE CRIAR UM NOVO OBJETO Colaborador para o registro
             Colaborador novoAtendimento = new Colaborador();
             novoAtendimento.setNumCracha(numCracha);
             novoAtendimento.setNomeColaborador(collaboratorNameInput);
             novoAtendimento.setInicioAtendimento(agora);
-            novoAtendimento.setStatus(false); // Status definido como false ao "entrar"
-            // O documentId será definido no callback do DAO após o sucesso do add()
+            novoAtendimento.setStatus(false);
 
-            // Registrar este NOVO atendimento no banco de dados e obter o documentId
             colaboradorDAO.cadastrarAtendimento(novoAtendimento, this, new ColaboradorDAO.OperacaoAtendimentoCallback() {
                 @Override
                 public void onSuccess(@Nullable Colaborador colaboradorSalvo) {
@@ -74,7 +71,6 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Toast.makeText(LoginActivity.this, "Entrada registrada e salva no banco!", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Atendimento salvo. Preparando para MainActivity. Document ID: " + colaboradorSalvo.getDocumentId());
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -86,8 +82,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                     String dataHoraFormatada = sdf.format(agora);
-                    Toast.makeText(LoginActivity.this, "Entrada registrada em: " + dataHoraFormatada, Toast.LENGTH_LONG).show();
-                    Toast.makeText(LoginActivity.this, "Bem vindo " + colaboradorSalvo.getNomeColaborador(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Entrada registrada em: " + dataHoraFormatada + "\n Bem vindo: " + collaboratorNameInput, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
