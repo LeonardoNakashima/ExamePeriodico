@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/numCracha"
             android:layout_width="281dp"
             android:layout_height="46dp"
             android:layout_marginStart="62dp"
@@ -51,7 +51,7 @@
             tools:src="@tools:sample/avatars" />
 
         <EditText
-            android:id="@+id/editTextTextPassword"
+            android:id="@+id/senhaAdm"
             android:layout_width="292dp"
             android:layout_height="42dp"
             android:layout_marginStart="57dp"
@@ -62,10 +62,10 @@
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+            app:layout_constraintTop_toBottomOf="@+id/numCracha" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnLoginAdm"
             android:layout_width="282dp"
             android:layout_height="55dp"
             android:layout_marginStart="62dp"
@@ -76,7 +76,7 @@
             android:textColorLink="#77B1A9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
+            app:layout_constraintTop_toBottomOf="@+id/senhaAdm" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

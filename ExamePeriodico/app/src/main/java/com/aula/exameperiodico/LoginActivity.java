@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         colaboradorDAO = new ColaboradorDAO();
 
         editTextCracha = findViewById(R.id.inputNum);
-        // editTextNome = findViewById(R.id.edtNomeCliente); // Removido
+        // editTextNome = findViewById(R.id.edtNomeCliente);
         btnEntrar = findViewById(R.id.btnLogin);
 
         btnEntrar.setOnClickListener(v -> registrarEntrada());

@@ -1,4 +1,4 @@
-package com.aula.exameperiodico;
+package com.aula.exameperiodico.recyclerView;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.aula.exameperiodico.R;
 
 class Area extends Fragment {
 
