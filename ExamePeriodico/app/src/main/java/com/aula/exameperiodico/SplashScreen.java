@@ -31,7 +31,7 @@ public class SplashScreen extends AppCompatActivity {
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 startActivity(new Intent(SplashScreen.this, MainActivity.class));
                 finish();
-            }, 3500); //
+            }, 2500); //
 
             videoView.start();
         }

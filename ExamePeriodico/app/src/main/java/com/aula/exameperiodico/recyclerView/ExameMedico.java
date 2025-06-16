@@ -5,18 +5,17 @@ import java.util.Date;
 import java.util.Locale;
 import java.io.Serializable; // Adicionar se você planeja passar este objeto entre Activities/Fragments
 
-public class ExameMedico implements Serializable { // Implementar Serializable se necessário
+public class ExameMedico implements Serializable {
     private int numCracha;
     private String nomeColaborador;
-    private String dataHora; // Este campo é para "tempo de atendimento" formatado, como você usou no adapter
+    private String dataHora;
     private Date inicioAtendimento;
     private Date terminoAtendimento;
     private Boolean status;
-    private String documentId; // NOVO CAMPO: Para armazenar o ID do documento do Firestore
+    private String documentId;
 
 
     public ExameMedico() {
-        // Construtor vazio necessário para o Firestore
     }
 
     // Construtor com todos os campos (exceto documentId, que é gerado pelo Firestore)
@@ -27,7 +26,6 @@ public class ExameMedico implements Serializable { // Implementar Serializable s
         this.inicioAtendimento = inicioAtendimento;
         this.terminoAtendimento = terminoAtendimento;
         this.status = status;
-        // O documentId não é inicializado aqui, ele é setado após a criação ou recuperação do Firestore
     }
 
     // --- Getters e Setters para os campos existentes ---
