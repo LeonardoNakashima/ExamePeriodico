@@ -1,0 +1,126 @@
+Index: app/src/main/java/com/aula/exameperiodico/recyclerView/ExamesActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.aula.exameperiodico.recyclerView;\r\n\r\nimport static android.os.Build.VERSION_CODES.R;\r\n\r\nimport android.os.Bundle;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.firebase.firestore.QueryDocumentSnapshot;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class ExamesActivity extends AppCompatActivity {\r\n\r\n    private RecyclerView recyclerView;\r\n    private ExameMedicoAdapter adapter;\r\n    private List<ExameMedico> listaExames = new ArrayList<>();\r\n    private FirebaseFirestore db;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_exames);\r\n\r\n        recyclerView = findViewById(R.id.recyclerViewExames);\r\n        recyclerView.setLayoutManager(new LinearLayoutManager(this));\r\n        adapter = new ExameMedicoAdapter(listaExames);\r\n        recyclerView.setAdapter(adapter);\r\n\r\n        db = FirebaseFirestore.getInstance();\r\n\r\n        carregarExamesDoFirebase();\r\n    }\r\n\r\n    private void carregarExamesDoFirebase() {\r\n        db.collection(\"examesMedicos\")\r\n                .get()\r\n                .addOnCompleteListener(task -> {\r\n                    if (task.isSuccessful()) {\r\n                        listaExames.clear();\r\n                        for (QueryDocumentSnapshot document : task.getResult()) {\r\n                            ExameMedico exame = document.toObject(ExameMedico.class);\r\n                            listaExames.add(exame);\r\n                        }\r\n                        adapter.notifyDataSetChanged();\r\n                    } else {\r\n                        Toast.makeText(this, \"Erro ao carregar exames\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n                });\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/aula/exameperiodico/recyclerView/ExamesActivity.java b/app/src/main/java/com/aula/exameperiodico/recyclerView/ExamesActivity.java
+--- a/app/src/main/java/com/aula/exameperiodico/recyclerView/ExamesActivity.java	(revision 5c29df58db10b9a10a766577f9b45762cee4bf9d)
++++ b/app/src/main/java/com/aula/exameperiodico/recyclerView/ExamesActivity.java	(date 1749223975733)
+@@ -1,9 +1,8 @@
+ package com.aula.exameperiodico.recyclerView;
+ 
+-import static android.os.Build.VERSION_CODES.R;
+-
+ import android.os.Bundle;
+ import android.widget.Toast;
++import com.aula.exameperiodico.R;
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+Index: app/src/main/java/com/aula/exameperiodico/recyclerView/ExameMedicoAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.aula.exameperiodico.recyclerView;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.aula.exameperiodico.R;\r\n\r\npublic class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.ExameViewHolder> {\r\n\r\n    private List<ExameMedico> listaExames;\r\n\r\n    public ExameMedicoAdapter(List<ExameMedico> listaExames) {\r\n        this.listaExames = listaExames;\r\n    }\r\n\r\n    public static class ExameViewHolder extends RecyclerView.ViewHolder {\r\n        TextView tvCracha, tvDataHora, tvNomeColaborador, tvInicioAtendimento, tvTerminoAtendimento;\r\n\r\n        public ExameViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n            tvCracha = itemView.findViewById(R.id.tvCracha);\r\n            tvDataHora = itemView.findViewById(R.id.tvDataHora);\r\n            tvNomeColaborador = itemView.findViewById(R.id.tvNomeColaborador);\r\n            tvInicioAtendimento = itemView.findViewById(R.id.tvInicioAtendimento);\r\n            tvTerminoAtendimento = itemView.findViewById(R.id.tvTerminoAtendimento);\r\n        }\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public ExameViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.exame_item, parent, false);\r\n        return new ExameViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull ExameViewHolder holder, int position) {\r\n        ExameMedico exame = listaExames.get(position);\r\n        holder.tvCracha.setText(\"Crachá: \" + exame.getCracha());\r\n        holder.tvDataHora.setText(\"Data/Hora: \" + exame.getDataHora());\r\n        holder.tvNomeColaborador.setText(\"Nome: \" + exame.getNomeColaborador());\r\n        holder.tvInicioAtendimento.setText(\"Início: \" + exame.getInicioAtendimento());\r\n\r\n        if (exame.getTerminoAtendimento() != null && !exame.getTerminoAtendimento().isEmpty()) {\r\n            holder.tvTerminoAtendimento.setVisibility(View.VISIBLE);\r\n            holder.tvTerminoAtendimento.setText(\"Término: \" + exame.getTerminoAtendimento());\r\n        } else {\r\n            holder.tvTerminoAtendimento.setVisibility(View.GONE);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return listaExames.size();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/aula/exameperiodico/recyclerView/ExameMedicoAdapter.java b/app/src/main/java/com/aula/exameperiodico/recyclerView/ExameMedicoAdapter.java
+--- a/app/src/main/java/com/aula/exameperiodico/recyclerView/ExameMedicoAdapter.java	(revision 5c29df58db10b9a10a766577f9b45762cee4bf9d)
++++ b/app/src/main/java/com/aula/exameperiodico/recyclerView/ExameMedicoAdapter.java	(date 1749223242953)
+@@ -3,12 +3,15 @@
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.TextView;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.recyclerview.widget.RecyclerView;
+ 
+ import com.aula.exameperiodico.R;
+ 
++import java.util.List;
++
+ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.ExameViewHolder> {
+ 
+     private List<ExameMedico> listaExames;
+Index: app/src/main/res/layout/fragment_notifications.xml
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_notifications.xml b/app/src/main/res/layout/fragment_notifications.xml
+deleted file mode 100644
+--- a/app/src/main/res/layout/fragment_notifications.xml	(revision 5c29df58db10b9a10a766577f9b45762cee4bf9d)
++++ /dev/null	(revision 5c29df58db10b9a10a766577f9b45762cee4bf9d)
+@@ -1,22 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    tools:context=".ui.notifications.NotificationsFragment">
+-
+-    <TextView
+-        android:id="@+id/text_notifications"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginTop="8dp"
+-        android:layout_marginEnd="8dp"
+-        android:textAlignment="center"
+-        android:textSize="20sp"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent" />
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_dashboard.xml
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_dashboard.xml b/app/src/main/res/layout/fragment_dashboard.xml
+deleted file mode 100644
+--- a/app/src/main/res/layout/fragment_dashboard.xml	(revision 5c29df58db10b9a10a766577f9b45762cee4bf9d)
++++ /dev/null	(revision 5c29df58db10b9a10a766577f9b45762cee4bf9d)
+@@ -1,22 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    tools:context=".ui.dashboard.DashboardFragment">
+-
+-    <TextView
+-        android:id="@+id/text_dashboard"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginTop="8dp"
+-        android:layout_marginEnd="8dp"
+-        android:textAlignment="center"
+-        android:textSize="20sp"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent" />
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_area_restrita.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<FrameLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".AreaRestrita\">\r\n\r\n    <!-- TODO: Update blank fragment layout -->\r\n    <TextView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:text=\"@string/hello_blank_fragment\" />\r\n\r\n    <androidx.constraintlayout.widget.ConstraintLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\">\r\n\r\n        <androidx.constraintlayout.widget.ConstraintLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\">\r\n\r\n        </androidx.constraintlayout.widget.ConstraintLayout>\r\n    </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n</FrameLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_area_restrita.xml b/app/src/main/res/layout/fragment_area_restrita.xml
+--- a/app/src/main/res/layout/fragment_area_restrita.xml	(revision 5c29df58db10b9a10a766577f9b45762cee4bf9d)
++++ b/app/src/main/res/layout/fragment_area_restrita.xml	(date 1748964150948)
+@@ -3,7 +3,7 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".AreaRestrita">
++    tools:context=".ui.arearestrita.AreaRestrita">
+ 
+     <!-- TODO: Update blank fragment layout -->
+     <TextView

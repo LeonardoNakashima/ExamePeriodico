@@ -18,7 +18,11 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginAdm extends Fragment {
 
     public LoginAdm() {
+<<<<<<< HEAD
         // Required empty public constructorAdd commentMore actions
+=======
+        // Required empty public constructor
+>>>>>>> 592d5a6b4e6c2730ba37c36859f57476cad0938d
     }
 
     @Override
@@ -28,8 +32,12 @@ public class LoginAdm extends Fragment {
 
         EditText editCracha = view.findViewById(R.id.numCracha);
         EditText editSenha = view.findViewById(R.id.senhaAdm);
+<<<<<<< HEAD
         Button btnLogin = view.findViewById(R.id.btnLoginAdm);
 
+=======
+        Button btnLogin = view.findViewById(R.id.logarAdm);
+>>>>>>> 592d5a6b4e6c2730ba37c36859f57476cad0938d
         btnLogin.setOnClickListener(v -> {
             String cracha = editCracha.getText().toString().trim();
             String senha = editSenha.getText().toString().trim();

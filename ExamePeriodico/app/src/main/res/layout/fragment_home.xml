@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+<<<<<<< HEAD
     <ImageView
         android:id="@+id/imageViewBackground"
         android:layout_width="0dp"
@@ -17,6 +18,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@null" />
+=======
+<!--    <ImageView-->
+<!--        android:id="@+id/imageViewBackground"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@drawable/recycler_view_back_ground"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:contentDescription="@null" />-->
+>>>>>>> 592d5a6b4e6c2730ba37c36859f57476cad0938d
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardViewProfile"
