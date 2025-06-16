@@ -67,11 +67,7 @@
             app:layout_constraintTop_toBottomOf="@+id/numCracha" />
 
         <Button
-<<<<<<< HEAD
             android:id="@+id/btnLoginAdm"
-=======
-            android:id="@+id/logarAdm"
->>>>>>> 592d5a6b4e6c2730ba37c36859f57476cad0938d
             android:layout_width="282dp"
             android:layout_height="55dp"
             android:layout_marginStart="62dp"
