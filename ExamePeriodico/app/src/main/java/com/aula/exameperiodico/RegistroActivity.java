@@ -17,8 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "LoginActivity";
+public class RegistroActivity extends AppCompatActivity {
+    private static final String TAG = "RegistroActivity";
     private EditText editTextCracha, editTextNome;
     private Button btnEntrar;
     private ColaboradorDAO colaboradorDAO;
@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_login);
+        setContentView(R.layout.fragment_registro);
 
         colaboradorDAO = new ColaboradorDAO();
 
@@ -66,15 +66,15 @@ public class LoginActivity extends AppCompatActivity {
                     // Este bloco executa DEPOIS que o registro foi salvo no Firebase
                     // e o 'colaboradorSalvo' agora tem o 'documentId' populado.
                     if (colaboradorSalvo == null || colaboradorSalvo.getDocumentId() == null) {
-                        Toast.makeText(LoginActivity.this, "Erro interno: Colaborador salvo ou ID é nulo.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegistroActivity.this, "Erro interno: Colaborador salvo ou ID é nulo.", Toast.LENGTH_LONG).show();
                         Log.e(TAG, "onSuccess: colaboradorSalvo ou documentId é nulo após cadastro.");
                         return;
                     }
 
                     Log.d(TAG, "Atendimento salvo. Preparando para MainActivity. Document ID: " + colaboradorSalvo.getDocumentId());
 
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("colaborador_atual", colaboradorSalvo); // Passa o objeto completo com o documentId
+                    Intent intent = new Intent(RegistroActivity.this, MainActivity.class);
+                    intent.putExtra("colaborador_atual", colaboradorSalvo);
 
                     editTextCracha.setText("");
                     editTextNome.setText("");
@@ -82,12 +82,12 @@ public class LoginActivity extends AppCompatActivity {
 
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                     String dataHoraFormatada = sdf.format(agora);
-                    Toast.makeText(LoginActivity.this, "Entrada registrada em: " + dataHoraFormatada + "\n Bem vindo: " + collaboratorNameInput, Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegistroActivity.this, "Entrada registrada em: " + dataHoraFormatada + "\n Bem vindo: " + collaboratorNameInput, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    Toast.makeText(LoginActivity.this, "Falha ao registrar entrada: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegistroActivity.this, "Falha ao registrar entrada: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Falha ao registrar entrada no banco: " + e.getMessage(), e);
                     editTextCracha.setText("");
                     editTextNome.setText("");

@@ -11,15 +11,14 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-<<<<<<< HEAD
-        android:id="@+id/navigation_admin"
-        android:name="com.aula.exameperiodico.ui.area_restrita.AreaRestrita"
-        tools:layout="@layout/fragment_area_restrita" />
+        android:id="@+id/navigation_login"
+        android:name="com.aula.exameperiodico.LoginAdm"
+        android:label="fragment_login_adm"
+        tools:layout="@layout/fragment_login_adm" />
 
-=======
-        android:id="@+id/area"
-        android:name="com.aula.exameperiodico.recyclerView.Area"
+    <fragment
+        android:id="@+id/navigation_area"
+        android:name="com.aula.exameperiodico.ui.area_restrita.Area"
         android:label="fragment_area"
         tools:layout="@layout/fragment_area" />
->>>>>>> main
 </navigation>

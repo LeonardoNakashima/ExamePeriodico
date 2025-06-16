@@ -9,9 +9,6 @@ import android.widget.VideoView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -32,7 +29,7 @@ public class SplashScreen extends AppCompatActivity {
 
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                startActivity(new Intent(SplashScreen.this, LoginActivity.class));
+                startActivity(new Intent(SplashScreen.this, MainActivity.class));
                 finish();
             }, 3500); //
 

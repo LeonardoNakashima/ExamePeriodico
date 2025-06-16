@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.aula.exameperiodico.database.Database;
+import com.aula.exameperiodico.recyclerView.ExameMedico; // Importar ExameMedico
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +28,7 @@ public class ColaboradorDAO {
 
     private static final String TAG = "ColaboradorDAO";
     private static final String EXAMES_COLLECTION = "exames";
-    private static final String ID_COUNTER_DOCUMENT = "exames_id"; // Este parece ser um documento fixo, não um contador
+    private static final String ID_COUNTER_DOCUMENT = "exames_id";
     private static final String ATENDIMENTOS_SUBCOLLECTION = "atendimentos";
 
     public interface ColaboradoresListCallback {
@@ -41,6 +43,12 @@ public class ColaboradorDAO {
 
     public interface ColaboradorCallback {
         void onColaboradorLoaded(Colaborador colaborador);
+        void onFailure(Exception e);
+    }
+
+    // NOVA INTERFACE: Para listar ExameMedico
+    public interface ExamesListCallback {
+        void onExamesLoaded(List<ExameMedico> exames);
         void onFailure(Exception e);
     }
 
@@ -83,7 +91,7 @@ public class ColaboradorDAO {
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("fimAtendimento", fimAtendimento);
-        updates.put("tempoAtendimento", tempoAtendimentoFormatado); // Nome do campo deve ser consistente com o modelo Colaborador
+        updates.put("tempoAtendimento", tempoAtendimentoFormatado);
         updates.put("status", status);
 
         getDb().collection(EXAMES_COLLECTION)
@@ -110,19 +118,72 @@ public class ColaboradorDAO {
             return;
         }
 
+        // 1. Primeiro, buscar o documento para verificar a data
         getDb().collection(EXAMES_COLLECTION)
                 .document(ID_COUNTER_DOCUMENT)
                 .collection(ATENDIMENTOS_SUBCOLLECTION)
                 .document(documentId)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(c, "Atendimento (ID: " + documentId + ") removido com sucesso!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Atendimento com ID: " + documentId + " removido.");
-                    callback.onSuccess(null);
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // O documento existe, agora vamos verificar a data
+                        Date terminoAtendimento = null;
+                        // Tentar obter a data de fimAtendimento. No Firestore, Date é mapeado para Timestamp.
+                        Timestamp timestamp = documentSnapshot.getTimestamp("fimAtendimento"); // Use o nome do campo como está no Firestore
+                        if (timestamp != null) {
+                            terminoAtendimento = timestamp.toDate();
+                        }
+
+                        if (terminoAtendimento == null) {
+                            // Se fimAtendimento não existe ou é nulo, não podemos aplicar a regra de 1 mês
+                            Toast.makeText(c, "Atendimento não pode ser removido: Data de término não encontrada.", Toast.LENGTH_SHORT).show();
+                            Log.w(TAG, "Tentativa de remoção falhou: fimAtendimento é nulo para ID: " + documentId);
+                            callback.onFailure(new Exception("Data de término do atendimento não encontrada."));
+                            return;
+                        }
+
+                        // Calcular a data de 1 mês atrás
+                        Calendar umMesAtras = Calendar.getInstance();
+                        umMesAtras.add(Calendar.MONTH, -1);
+                        Date dataLimite = umMesAtras.getTime();
+
+                        // Comparar as datas
+                        if (terminoAtendimento.before(dataLimite)) {
+                            // A data de término é MAIOR que 1 mês atrás (ou seja, mais antiga que 1 mês atrás)
+                            // PROSSEGUIR COM A EXCLUSÃO
+                            getDb().collection(EXAMES_COLLECTION)
+                                    .document(ID_COUNTER_DOCUMENT)
+                                    .collection(ATENDIMENTOS_SUBCOLLECTION)
+                                    .document(documentId)
+                                    .delete()
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(c, "Atendimento (ID: " + documentId + ") removido com sucesso!", Toast.LENGTH_SHORT).show();
+                                        Log.d(TAG, "Atendimento com ID: " + documentId + " removido.");
+                                        callback.onSuccess(null);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(c, "Erro ao remover atendimento (ID: " + documentId + "): " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Log.e(TAG, "Erro ao remover atendimento (ID: " + documentId + "): " + e.getMessage(), e);
+                                        callback.onFailure(e);
+                                    });
+                        } else {
+                            // A data de término NÃO é maior que 1 mês atrás (ou seja, é recente)
+                            Toast.makeText(c, "Atendimento só pode ser removido após 1 mês do término.", Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "Tentativa de remoção falhou: atendimento muito recente. ID: " + documentId);
+                            callback.onFailure(new Exception("Atendimento muito recente para remoção."));
+                        }
+
+                    } else {
+                        // O documento não existe
+                        Toast.makeText(c, "Atendimento não encontrado para remoção.", Toast.LENGTH_SHORT).show();
+                        Log.w(TAG, "Tentativa de remoção falhou: Documento não existe para ID: " + documentId);
+                        callback.onFailure(new Exception("Atendimento não encontrado."));
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(c, "Erro ao remover atendimento (ID: " + documentId + "): " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Erro ao remover atendimento (ID: " + documentId + "): " + e.getMessage(), e);
+                    // Erro ao buscar o documento
+                    Toast.makeText(c, "Erro ao verificar atendimento para remoção: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Erro ao buscar documento para verificação de remoção (ID: " + documentId + "): " + e.getMessage(), e);
                     callback.onFailure(e);
                 });
     }
@@ -160,4 +221,43 @@ public class ColaboradorDAO {
                     }
                 });
     }
+
+    // NOVO MÉTODO: Para listar ExameMedico
+    public void listarExamesMedicos(final ExamesListCallback callback) {
+        getDb().collection(EXAMES_COLLECTION)
+                .document(ID_COUNTER_DOCUMENT)
+                .collection(ATENDIMENTOS_SUBCOLLECTION) // Assumindo que os ExameMedico estão nesta subcoleção
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.e(TAG, "Erro ao listar exames médicos: " + error.getMessage(), error);
+                            callback.onFailure(error);
+                            return;
+                        }
+                        if (value == null) {
+                            Log.w(TAG, "QuerySnapshot é nulo para listarExamesMedicos.");
+                            callback.onExamesLoaded(new ArrayList<>());
+                            return;
+                        }
+
+                        List<ExameMedico> examesList = new ArrayList<>();
+                        for (DocumentSnapshot doc : value.getDocuments()) {
+                            // Tenta converter o documento para ExameMedico.class
+                            ExameMedico exame = doc.toObject(ExameMedico.class);
+                            if (exame != null) {
+                                exame.setDocumentId(doc.getId()); // Popula o documentId
+                                examesList.add(exame);
+                            } else {
+                                Log.w(TAG, "Documento " + doc.getId() + " não pôde ser convertido para ExameMedico.");
+                            }
+                        }
+                        callback.onExamesLoaded(examesList);
+                        Log.d(TAG, "Lista de exames médicos atualizada. Total: " + examesList.size());
+                    }
+                });
+    }
+
+    // Este método não será mais usado na LoginActivity com o novo fluxo de "sempre criar novo"
+    // Não incluído aqui, pois o último snippet não o tinha. Se precisar, adicione-o de volta.
 }
