@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_home, R.id.navigation_login).build(); // Ajuste conforme seu mobile_navigation.xml
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        navController.navigate(R.id.nav_host_fragment_activity_main);
-
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         // Define a visibilidade inicial dos botões baseada no estado do colaborador
