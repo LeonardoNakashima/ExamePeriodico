@@ -28,7 +28,6 @@ public class ExameMedico implements Serializable {
         this.status = status;
     }
 
-    // --- Getters e Setters para os campos existentes ---
 
     public int getNumCracha() {
         return numCracha;

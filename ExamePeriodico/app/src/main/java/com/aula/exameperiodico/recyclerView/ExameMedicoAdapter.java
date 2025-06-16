@@ -1,5 +1,6 @@
 package com.aula.exameperiodico.recyclerView;
 
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
             super(itemView);
             tvCracha = itemView.findViewById(R.id.tvCracha);
             tvDataHora = itemView.findViewById(R.id.tvDataInsercao);
-            tvNomeColaborador = itemView.findViewById(R.id.tvNomeAdm);
+            tvNomeColaborador = itemView.findViewById(R.id.tvNome);
             tvInicioAtendimento = itemView.findViewById(R.id.tvInicioAtendimento);
             tvTerminoAtendimento = itemView.findViewById(R.id.tvTerminoAtendimento);
             tvStatus = itemView.findViewById(R.id.tvStatus);
@@ -49,7 +50,17 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
         holder.tvDataHora.setText("Tempo de atendimento: " + exame.getDataHora());
         holder.tvNomeColaborador.setText("Nome: " + exame.getNomeColaborador());
         holder.tvInicioAtendimento.setText("Início: " + exame.getFormattedInicioAtendimento());
-        holder.tvStatus.setText("Status: " + (exame.getStatus() ? "Finalizada" : "Em andamento"));
+        String statusTexto = exame.getStatus() ? "Finalizada" : "Em andamento";
+
+        int statusColor = holder.tvStatus.getContext().getResources().getColor(
+                exame.getStatus() ? R.color.md_theme_primaryFixed_mediumContrast : R.color.md_theme_errorContainer_mediumContrast
+        );
+        SpannableString spannable = new SpannableString("Status: " + statusTexto);
+        int start = "Status: ".length();
+        int end = start + statusTexto.length();
+        spannable.setSpan(new android.text.style.ForegroundColorSpan(statusColor), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        holder.tvStatus.setText(spannable);
 
         String terminoAtendimento = exame.getFormattedTerminoAtendimento();
         if (!terminoAtendimento.isEmpty()) {

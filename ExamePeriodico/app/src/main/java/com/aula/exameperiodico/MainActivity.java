@@ -10,6 +10,7 @@ import com.aula.exameperiodico.database.colaborador.Colaborador;
 import com.aula.exameperiodico.database.colaborador.ColaboradorDAO;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -111,6 +112,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.e("MainActivity", "Erro: btnAdd é nulo no layout.");
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                logout();
+                finish();
+            }
+        });
     }
 
     // Método para gerenciar a visibilidade dos botões baseado no estado do colaboradorAtual
