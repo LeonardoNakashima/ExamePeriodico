@@ -67,7 +67,13 @@ public class HomeFragment extends Fragment {
                 listaExames.clear();
 
                 // Ordena por dataHora decrescente (mais recente primeiro)
-                colaboradores.sort((a, b) -> b.getDataHora().compareTo(a.getDataHora()));
+                colaboradores.sort((a, b) -> {
+                    if (b.getDataHora() == null && a.getDataHora() == null) return 0;
+                    if (b.getDataHora() == null) return -1;  // null vai para o final da lista
+                    if (a.getDataHora() == null) return 1;
+                    return b.getDataHora().compareTo(a.getDataHora());
+                });
+
 
                 for (Colaborador col : colaboradores) {
                     listaExames.add(new ExameMedico(
