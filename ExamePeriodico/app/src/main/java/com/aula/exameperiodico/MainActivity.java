@@ -1,17 +1,17 @@
 package com.aula.exameperiodico;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.Toast;
 
 import com.aula.exameperiodico.database.colaborador.Colaborador;
 import com.aula.exameperiodico.database.colaborador.ColaboradorDAO;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -21,115 +21,227 @@ import androidx.navigation.ui.NavigationUI;
 import com.aula.exameperiodico.databinding.ActivityMainBinding;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
     private ActivityMainBinding binding;
     private Colaborador colaboradorAtual;
     private ColaboradorDAO colaboradorDAO;
-    private String nomeCliente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        colaboradorDAO = new ColaboradorDAO();
+        setSupportActionBar(findViewById(R.id.toolbar));
 
+        colaboradorDAO = new ColaboradorDAO();
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
+        // Certifique-se de que R.id.navigation_login existe no seu nav_graph
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_admin)
-                .build();
+                R.id.navigation_home, R.id.navigation_login).build(); // Ajuste conforme seu mobile_navigation.xml
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.navigate(R.id.nav_host_fragment_activity_main);
 
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        // Ajustado o listener para btnFinalizar
-        binding.btnFinalizar.setOnClickListener(v -> {
-            // Verifica se há um colaborador atual antes de tentar acessar seus dados
-            if (colaboradorAtual == null) {
-                Toast.makeText(this, "Nenhum colaborador logado para finalizar atendimento.", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        // Define a visibilidade inicial dos botões baseada no estado do colaborador
+        updateButtonVisibility(); // Chamada inicial para o estado de onCreate
 
-            // Verifica se o nome do colaborador está preenchido antes de finalizar o atendimento
-            if (nomeCliente != null && !nomeCliente.isEmpty()) {
-                finalizarAtendimento();
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.navigation_home) {
+                // Se estiver na tela inicial (navigation_home)
+                updateButtonVisibility(); // Atualiza a visibilidade baseada no colaboradorAtual
             } else {
-                Toast.makeText(this, "Por favor, preencha o nome do cliente antes de finalizar!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        binding.btnAdd.setOnClickListener(v -> {
-            // Criação do EditText
-            final EditText input = new EditText(MainActivity.this);
-            input.setHint("Digite o nome do cliente"); // Revertido para um hint mais genérico
-            input.setPadding(40, 30, 40, 30);
-
-            // Criação do AlertDialog
-            new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
-                    .setTitle("Nome do cliente")
-                    .setMessage("Digite as informações necessárias:")
-                    .setView(input)
-                    .setPositiveButton("Salvar", (dialog, which) -> {
-                        nomeCliente = input.getText().toString().trim();
-                        if (!nomeCliente.isEmpty()) {
-                            if (colaboradorAtual != null) {
-                                colaboradorAtual.setNomeColaborador(nomeCliente);
-                                Toast.makeText(MainActivity.this, "Nome do cliente: " + nomeCliente, Toast.LENGTH_SHORT).show(); // Ajustado a mensagem
-                            } else {
-                                Toast.makeText(MainActivity.this, "Nenhum cliente ativo.", Toast.LENGTH_SHORT).show();
-                                Log.w("MainActivity", "Tentativa de cadastrar nome, mas nomeCliente é null.");
-                            }
-                        } else {
-                            Toast.makeText(MainActivity.this, "Por favor, digite algo.", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
-                    .show();
-        });
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            if (intent.hasExtra("colaborador_atual")) {
-                colaboradorAtual = (Colaborador) intent.getSerializableExtra("colaborador_atual");
-                if (colaboradorAtual != null) {
-                    Log.d("MainActivity", "Colaborador recebido: " + colaboradorAtual.getNumCracha() + " - " + colaboradorAtual.getNomeColaborador());
-                } else {
-                    Log.e("MainActivity", "Colaborador recebido é null, mesmo com extra.");
+                // CORRIGIDO: Se NÃO estiver na tela inicial, ESCONDE TODOS os botões de ação
+                // Independentemente do estado de colaboradorAtual.
+                if (binding.btnFinalizar != null) {
+                    binding.btnFinalizar.setVisibility(View.GONE);
                 }
-            } else {
-                Log.e("MainActivity", "Intent não contém 'colaborador_atual' extra. Pode ser um problema de fluxo.");
+                if (binding.btnLogout != null) {
+                    binding.btnLogout.setVisibility(View.GONE);
+                }
+                if (binding.btnAdd != null) {
+                    binding.btnAdd.setVisibility(View.GONE);
+                }
             }
+        });
+
+        // Recuperar o colaborador atual da Intent
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("colaborador_atual")) {
+            colaboradorAtual = (Colaborador) intent.getSerializableExtra("colaborador_atual");
+            if (colaboradorAtual != null) {
+                Log.d("MainActivity", "Colaborador recebido: " + colaboradorAtual.getNumCracha() +
+                        " - " + colaboradorAtual.getNomeColaborador() +
+                        " (Document ID: " + colaboradorAtual.getDocumentId() + ")");
+                // Após receber o colaborador, a visibilidade será atualizada pela chamada abaixo
+            } else {
+                Log.e("MainActivity", "Colaborador recebido é nulo, mesmo com extra. Isso não deveria acontecer se o fluxo estiver correto.");
+            }
+        } else {
+            Log.w("MainActivity", "Intent não contém 'colaborador_atual' extra. Pode ser um problema de fluxo ou reinício do app.");
+        }
+
+        // Chamada adicional para garantir a visibilidade correta após o recebimento do Intent
+        // Isso é importante porque colaboradorAtual é setado APÓS a primeira execução do listener
+        updateButtonVisibility();
+
+
+        // Configurar Listeners para os botões
+        if (binding.btnFinalizar != null) {
+            binding.btnFinalizar.setOnClickListener(v -> finalizarAtendimento());
+        } else {
+            Log.e("MainActivity", "Erro: btnFinalizar é nulo no layout.");
+        }
+
+        if (binding.btnLogout != null) {
+            binding.btnLogout.setOnClickListener(v -> logout());
+        } else {
+            Log.e("MainActivity", "Erro: btnLogout é nulo no layout.");
+        }
+
+        if (binding.btnAdd != null) {
+            binding.btnAdd.setOnClickListener(v -> {
+                Intent addIntent = new Intent(MainActivity.this, RegistroActivity.class);
+                startActivity(addIntent);
+            });
+        } else {
+            Log.e("MainActivity", "Erro: btnAdd é nulo no layout.");
         }
     }
 
-    public void setColaboradorAtual(Colaborador colaborador) {
-        this.colaboradorAtual = colaborador;
-    }
-
-    private void finalizarAtendimento() {
-
-        if (colaboradorAtual == null) {
-            Toast.makeText(this, "Nenhum colaborador entrou para finalizar atendimento!", Toast.LENGTH_SHORT).show();
-            Log.w("MainActivity", "Erro no método de listagem: colaboradorAtual é null.");
+    // Método para gerenciar a visibilidade dos botões baseado no estado do colaboradorAtual
+    private void updateButtonVisibility() {
+        if (binding == null) {
+            Log.e("MainActivity", "Binding é nulo ao tentar atualizar a visibilidade dos botões.");
             return;
         }
 
-        colaboradorAtual.setFimAtendimento(new Date());
+        if (colaboradorAtual != null) {
+            // Há um atendimento ativo
+            if (binding.btnFinalizar != null) {
+                binding.btnFinalizar.setVisibility(View.VISIBLE);
+            }
+            if (binding.btnLogout != null) {
+                binding.btnLogout.setVisibility(View.VISIBLE);
+            }
+            if (binding.btnAdd != null) {
+                binding.btnAdd.setVisibility(View.GONE);
+            }
+        } else {
+            if (binding.btnFinalizar != null) {
+                binding.btnFinalizar.setVisibility(View.GONE);
+            }
+            if (binding.btnLogout != null) {
+                binding.btnLogout.setVisibility(View.GONE);
+            }
+            if (binding.btnAdd != null) {
+                binding.btnAdd.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 
-        colaboradorDAO.cadastrarAtendimento(colaboradorAtual, this);
 
-        colaboradorAtual.setDataHora(new Date());
+    public void setColaboradorAtual(Colaborador colaborador) {
+        this.colaboradorAtual = colaborador;
+        updateButtonVisibility(); // Atualiza a visibilidade sempre que o colaboradorAtual muda
+    }
 
-        Toast.makeText(this, "Atendimento finalizado!", Toast.LENGTH_SHORT).show();
+    private void finalizarAtendimento() {
+        if (colaboradorAtual == null || colaboradorAtual.getDocumentId() == null || colaboradorAtual.getDocumentId().isEmpty()) {
+            Toast.makeText(this, "Nenhum atendimento ativo para finalizar ou ID do documento ausente!", Toast.LENGTH_SHORT).show();
+            Log.w("MainActivity", "Finalizar Atendimento: Colaborador atual é nulo ou ID do documento ausente/vazio.");
+            return;
+        }
 
-        colaboradorAtual = null; // Limpa o colaborador atual após finalizar o atendimento
-        Log.d("MainActivity", "Atendimento finalizado e colaboradorAtual limpo.");
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Finalizar Atendimento")
+                .setMessage("Tem certeza de que deseja finalizar o atendimento?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    if (colaboradorAtual.getInicioAtendimento() == null) {
+                        Toast.makeText(this, "Erro: Data de início do atendimento não encontrada.", Toast.LENGTH_LONG).show();
+                        Log.e("MainActivity", "Finalizar Atendimento: Data de início do atendimento é nula para o colaborador: " + colaboradorAtual.getNumCracha());
+                        return;
+                    }
+
+                    Date fimAtendimento = new Date();
+                    long diffInMillies = Math.abs(fimAtendimento.getTime() - colaboradorAtual.getInicioAtendimento().getTime());
+                    long minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillies);
+                    long hours = TimeUnit.MILLISECONDS.toHours(diffInMillies);
+                    long seconds = TimeUnit.MILLISECONDS.toSeconds(diffInMillies) % 60;
+
+                    String tempoAtendimentoFormatado;
+                    if (hours > 0) {
+                        tempoAtendimentoFormatado = String.format("%d horas e %d minutos", hours, minutes % 60);
+                    } else if (minutes > 0) {
+                        tempoAtendimentoFormatado = String.format("%d minutos e %d segundos", minutes, seconds);
+                    } else {
+                        tempoAtendimentoFormatado = String.format("%d segundos", seconds);
+                    }
+                    Log.d("MainActivity", "Finalizar Atendimento: Tempo de atendimento para " + colaboradorAtual.getNomeColaborador() + ": " + tempoAtendimentoFormatado);
+
+                    colaboradorDAO.atualizarAtendimento(colaboradorAtual.getDocumentId(), fimAtendimento, tempoAtendimentoFormatado, true, this, new ColaboradorDAO.OperacaoAtendimentoCallback() {
+                        @Override
+                        public void onSuccess(@Nullable Colaborador resultColaborador) {
+                            Toast.makeText(MainActivity.this, "Atendimento finalizado! Duração: " + tempoAtendimentoFormatado, Toast.LENGTH_LONG).show();
+                            colaboradorAtual = null;
+                            Log.d("MainActivity", "Finalizar Atendimento: Atendimento finalizado e colaboradorAtual limpo.");
+                            updateButtonVisibility(); // Atualiza a visibilidade após finalizar
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(MainActivity.this, "Erro ao finalizar atendimento no banco: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Log.e("MainActivity", "Finalizar Atendimento: Erro ao finalizar atendimento no banco: " + e.getMessage(), e);
+                        }
+                    });
+                })
+                .setNegativeButton("Não", null)
+                .show();
+    }
+
+    private void logout() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Tem certeza de que deseja sair?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    String docIdToClear = null;
+                    if (colaboradorAtual != null && colaboradorAtual.getDocumentId() != null && !colaboradorAtual.getDocumentId().isEmpty()) {
+                        docIdToClear = colaboradorAtual.getDocumentId();
+                    }
+
+                    colaboradorAtual = null; // Limpa o colaborador atual IMEDIATAMENTE
+
+                    if (docIdToClear != null) {
+                        colaboradorDAO.removerAtendimento(docIdToClear, this, new ColaboradorDAO.OperacaoAtendimentoCallback() {
+                            @Override
+                            public void onSuccess(@Nullable Colaborador resultColaborador) {
+                                Log.d("MainActivity", "Logout: Atendimento ativo removido com sucesso (se existia).");
+                                Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Log.e("MainActivity", "Logout: Erro ao tentar remover atendimento ativo: " + e.getMessage(), e);
+                                Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    } else {
+                        Log.d("MainActivity", "Logout: Nenhum atendimento ativo para remover ou ID do documento ausente.");
+                        Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("Não", null)
+                .show();
     }
 }

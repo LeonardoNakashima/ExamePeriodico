@@ -21,7 +21,7 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
     }
 
     public static class ExameViewHolder extends RecyclerView.ViewHolder {
-        TextView tvCracha, tvDataHora, tvNomeColaborador, tvInicioAtendimento, tvTerminoAtendimento;
+        TextView tvCracha, tvDataHora, tvNomeColaborador, tvInicioAtendimento, tvTerminoAtendimento, tvStatus;
 
         public ExameViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -30,6 +30,7 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
             tvNomeColaborador = itemView.findViewById(R.id.tvNomeAdm);
             tvInicioAtendimento = itemView.findViewById(R.id.tvInicioAtendimento);
             tvTerminoAtendimento = itemView.findViewById(R.id.tvTerminoAtendimento);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
         }
     }
 
@@ -44,13 +45,12 @@ public class ExameMedicoAdapter extends RecyclerView.Adapter<ExameMedicoAdapter.
     public void onBindViewHolder(@NonNull ExameViewHolder holder, int position) {
         ExameMedico exame = listaExames.get(position);
 
-        // Usando os novos métodos de formatação segura
-        holder.tvCracha.setText("Admin Cracha: " + exame.getNumCracha());
-        holder.tvDataHora.setText("Data/Hora: " + exame.getFormattedDataHora());
+        holder.tvCracha.setText("Crachá: " + exame.getNumCracha());
+        holder.tvDataHora.setText("Tempo de atendimento: " + exame.getDataHora());
         holder.tvNomeColaborador.setText("Nome: " + exame.getNomeColaborador());
         holder.tvInicioAtendimento.setText("Início: " + exame.getFormattedInicioAtendimento());
+        holder.tvStatus.setText("Status: " + (exame.getStatus() ? "Finalizada" : "Em andamento"));
 
-        // Lógica para o término do atendimento, ainda usando a formatação segura
         String terminoAtendimento = exame.getFormattedTerminoAtendimento();
         if (!terminoAtendimento.isEmpty()) {
             holder.tvTerminoAtendimento.setVisibility(View.VISIBLE);

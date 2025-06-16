@@ -23,6 +23,8 @@ import com.aula.exameperiodico.database.colaborador.Colaborador;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator; // Importado para usar Comparator
+import java.util.Date;       // Importado para usar Date::compareTo
 
 public class HomeFragment extends Fragment {
 
@@ -45,7 +47,6 @@ public class HomeFragment extends Fragment {
 
         recyclerView = binding.rv;
 
-        // Layout normal (sem reverseLayout)
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -73,27 +74,30 @@ public class HomeFragment extends Fragment {
                     if (a.getDataHora() == null) return 1;
                     return b.getDataHora().compareTo(a.getDataHora());
                 });
+                // --- FIM DA ORDENAÇÃO ---
 
 
                 for (Colaborador col : colaboradores) {
                     listaExames.add(new ExameMedico(
                             col.getNumCracha(),
                             col.getNomeColaborador(),
-                            col.getDataHora(),
+                            col.getDataHora(), // DataHora aqui é a String de duração
                             col.getInicioAtendimento(),
-                            col.getFimAtendimento()
+                            col.getFimAtendimento(),
+                            col.getStatus()
                     ));
                 }
 
                 adapter.notifyDataSetChanged();
 
+                // Rola para a primeira posição para mostrar o item mais recente
                 recyclerView.post(() -> recyclerView.scrollToPosition(0));
             }
 
             @Override
             public void onFailure(Exception e) {
                 Toast.makeText(getContext(), "Erro ao carregar exames do Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                Log.d(TAG, "Erro ao carregar exames: " + e.getMessage());
+                Log.e(TAG, "Erro ao carregar exames: " + e.getMessage(), e);
             }
         });
     }

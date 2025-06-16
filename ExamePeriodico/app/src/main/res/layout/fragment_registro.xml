@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginFragment" >
+    tools:context=".RegistroActivity" >
 
     <TextView
         android:id="@+id/textView"
@@ -25,7 +25,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="número cracha"
-        android:inputType="text"
+        android:inputType="number"
+        android:maxLength="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -37,7 +38,7 @@
         android:id="@+id/btnLogin"
         android:layout_width="199dp"
         android:layout_height="57dp"
-        android:text="entrar"
+        android:text="Adicionar"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@+id/inputNum" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/inputNome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
