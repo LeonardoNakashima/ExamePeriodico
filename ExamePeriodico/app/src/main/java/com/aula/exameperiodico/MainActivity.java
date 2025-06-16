@@ -213,31 +213,27 @@ public class MainActivity extends AppCompatActivity {
                         docIdToClear = colaboradorAtual.getDocumentId();
                     }
 
-                    colaboradorAtual = null; // Limpa o colaborador atual IMEDIATAMENTE
+                    colaboradorAtual = null;
 
                     if (docIdToClear != null) {
-                        colaboradorDAO.removerAtendimento(docIdToClear, this, new ColaboradorDAO.OperacaoAtendimentoCallback() {
+                        colaboradorDAO.autoRemoverAtendimento(docIdToClear, this, new ColaboradorDAO.OperacaoAtendimentoCallback() {
                             @Override
                             public void onSuccess(@Nullable Colaborador resultColaborador) {
                                 Log.d("MainActivity", "Logout: Atendimento ativo removido com sucesso (se existia).");
-                                Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
-                                startActivity(intent);
-                                finish();
+                                binding.btnAdd.setVisibility(View.VISIBLE);
+                                binding.btnFinalizar.setVisibility(View.GONE);
+                                binding.btnLogout.setVisibility(View.GONE);
                             }
 
                             @Override
                             public void onFailure(Exception e) {
                                 Log.e("MainActivity", "Logout: Erro ao tentar remover atendimento ativo: " + e.getMessage(), e);
-                                Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
-                                startActivity(intent);
-                                finish();
                             }
                         });
                     } else {
                         Log.d("MainActivity", "Logout: Nenhum atendimento ativo para remover ou ID do documento ausente.");
-                        Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
-                        startActivity(intent);
-                        finish();
+                        Intent registroIntent = new Intent(MainActivity.this, RegistroActivity.class);
+                        startActivity(registroIntent);
                     }
                 })
                 .setNegativeButton("Não", null)

@@ -57,30 +57,51 @@ public class ColaboradorDAO {
     }
 
     public void cadastrarAtendimento(Colaborador colaborador, Context context, final OperacaoAtendimentoCallback callback) {
-        try {
-            getDb().collection(EXAMES_COLLECTION)
-                    .document(ID_COUNTER_DOCUMENT)
-                    .collection(ATENDIMENTOS_SUBCOLLECTION)
-                    .add(colaborador)
-                    .addOnSuccessListener(documentReference -> {
-                        String newDocumentId = documentReference.getId();
-                        colaborador.setDocumentId(newDocumentId);
+            try {
+                getDb().collection(EXAMES_COLLECTION)
+                        .document(ID_COUNTER_DOCUMENT)
+                        .collection(ATENDIMENTOS_SUBCOLLECTION)
+                        .whereEqualTo("numCracha", colaborador.getNumCracha())
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                // Já existe um atendimento com este crachá
+                                Toast.makeText(context, "Atendimento já cadastrado para o crachá: " + colaborador.getNumCracha(), Toast.LENGTH_SHORT).show();
+                                Log.w(TAG, "Atendimento duplicado para crachá: " + colaborador.getNumCracha());
+                                callback.onFailure(new Exception("Atendimento já cadastrado para este crachá."));
+                            } else {
+                                // Nenhum atendimento com esse crachá, pode cadastrar
+                                getDb().collection(EXAMES_COLLECTION)
+                                        .document(ID_COUNTER_DOCUMENT)
+                                        .collection(ATENDIMENTOS_SUBCOLLECTION)
+                                        .add(colaborador)
+                                        .addOnSuccessListener(documentReference -> {
+                                            String newDocumentId = documentReference.getId();
+                                            colaborador.setDocumentId(newDocumentId);
 
-                        Toast.makeText(context, "Atendimento cadastrado: " + colaborador.getNumCracha(), Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Atendimento cadastrado para Crachá: " + colaborador.getNumCracha() + ". ID do Documento: " + newDocumentId);
-                        callback.onSuccess(colaborador);
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(context, "Erro ao cadastrar atendimento: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "Erro ao cadastrar atendimento: " + e.getMessage(), e);
-                        callback.onFailure(e);
-                    });
-        } catch (Exception e) {
-            Toast.makeText(context, "Erro geral ao cadastrar atendimento: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Erro geral em cadastrarAtendimento: " + e.getMessage(), e);
-            callback.onFailure(e);
-        }
+                                            Toast.makeText(context, "Atendimento cadastrado: " + colaborador.getNumCracha(), Toast.LENGTH_SHORT).show();
+                                            Log.d(TAG, "Atendimento cadastrado para Crachá: " + colaborador.getNumCracha() + ". ID do Documento: " + newDocumentId);
+                                            callback.onSuccess(colaborador);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(context, "Erro ao cadastrar atendimento: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            Log.e(TAG, "Erro ao cadastrar atendimento: " + e.getMessage(), e);
+                                            callback.onFailure(e);
+                                        });
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(context, "Erro ao verificar crachá: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Erro na verificação de crachá: " + e.getMessage(), e);
+                            callback.onFailure(e);
+                        });
+            } catch (Exception e) {
+                Toast.makeText(context, "Erro geral ao cadastrar atendimento: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Erro geral em cadastrarAtendimento: " + e.getMessage(), e);
+                callback.onFailure(e);
+            }
     }
+
 
     public void atualizarAtendimento(String documentId, Date fimAtendimento, String tempoAtendimentoFormatado, boolean status, Context context, final OperacaoAtendimentoCallback callback) {
         if (documentId == null || documentId.isEmpty()) {
@@ -187,6 +208,30 @@ public class ColaboradorDAO {
                     callback.onFailure(e);
                 });
     }
+    public void autoRemoverAtendimento(String documentId, Context c, final OperacaoAtendimentoCallback callback) {
+        if (documentId == null || documentId.trim().isEmpty()) {
+            Toast.makeText(c, "ID do atendimento inválido para remoção.", Toast.LENGTH_SHORT).show();
+            callback.onFailure(new IllegalArgumentException("ID do documento é nulo ou vazio."));
+            return;
+        }
+
+        getDb().collection(EXAMES_COLLECTION)
+                .document(ID_COUNTER_DOCUMENT)
+                .collection(ATENDIMENTOS_SUBCOLLECTION)
+                .document(documentId)
+                .delete()
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(c, "Atendimento removido com sucesso!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Atendimento com ID: " + documentId + " removido automaticamente.");
+                    callback.onSuccess(null);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(c, "Erro ao remover atendimento: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Erro ao remover atendimento com ID: " + documentId, e);
+                    callback.onFailure(e);
+                });
+    }
+
 
     public void listarAtendimentos(final ColaboradoresListCallback callback) {
         getDb().collection(EXAMES_COLLECTION)

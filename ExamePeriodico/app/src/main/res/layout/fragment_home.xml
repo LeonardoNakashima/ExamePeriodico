@@ -40,6 +40,7 @@
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/user"
             tools:src="@tools:sample/avatars" />
+
     </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView

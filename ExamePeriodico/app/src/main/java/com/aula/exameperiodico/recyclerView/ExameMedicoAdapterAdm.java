@@ -78,7 +78,7 @@ public class ExameMedicoAdapterAdm extends RecyclerView.Adapter<ExameMedicoAdapt
         public ExameViewHolder(@NonNull View itemView) {
             super(itemView);
             tvCracha = itemView.findViewById(R.id.tvCracha);
-            tvDataHora = itemView.findViewById(R.id.tvDataInsercao); // Assumindo que este é para tempo de atendimento
+            tvDataHora = itemView.findViewById(R.id.tvDataInsercao);
             tvNomeColaborador = itemView.findViewById(R.id.tvNomeAdm);
             tvInicioAtendimento = itemView.findViewById(R.id.tvInicioAtendimento);
             tvTerminoAtendimento = itemView.findViewById(R.id.tvTerminoAtendimento);

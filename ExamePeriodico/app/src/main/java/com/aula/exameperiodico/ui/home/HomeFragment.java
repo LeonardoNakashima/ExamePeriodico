@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment {
                     listaExames.add(new ExameMedico(
                             col.getNumCracha(),
                             col.getNomeColaborador(),
-                            col.getDataHora(), // DataHora aqui é a String de duração
+                            col.getDataHora(),
                             col.getInicioAtendimento(),
                             col.getFimAtendimento(),
                             col.getStatus()

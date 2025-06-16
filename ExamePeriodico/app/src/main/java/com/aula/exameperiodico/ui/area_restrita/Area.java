@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +30,6 @@ public class Area extends Fragment implements ExameMedicoAdapterAdm.OnItemLongCl
     private ExameMedicoAdapterAdm exameMedicoAdapterAdm;
     private ColaboradorDAO colaboradorDAO;
     private List<ExameMedico> listaExames = new ArrayList<>();
-
     private static final String TAG = "AreaFragment";
 
     @Nullable
